@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Annonces{% endblock %}
+
+{% block body %}
+    <h1>Annonces</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ annonce.id }}</td>
+            </tr>
+            <tr>
+                <th>Type</th>
+                <td>{{ annonce.type }}</td>
+            </tr>
+            <tr>
+                <th>Ville_dep</th>
+                <td>{{ annonce.villeDep }}</td>
+            </tr>
+            <tr>
+                <th>Ville_arr</th>
+                <td>{{ annonce.villeArr }}</td>
+            </tr>
+            <tr>
+                <th>Date_dep</th>
+                <td>{{ annonce.dateDep }}</td>
+            </tr>
+            <tr>
+                <th>Date_arr</th>
+                <td>{{ annonce.dateArr }}</td>
+            </tr>
+            <tr>
+                <th>Prix</th>
+                <td>{{ annonce.prix }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ annonce.description }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_annonces_index') }}">back to list</a>
+
+    <a href="{{ path('app_annonces_edit', {'id': annonce.id}) }}">edit</a>
+
+    {{ include('annonces/_delete_form.html.twig') }}
+{% endblock %}

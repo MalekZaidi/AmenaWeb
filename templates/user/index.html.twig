@@ -1,0 +1,96 @@
+{% extends 'baseadmin.html.twig' %}
+
+{% block title %}User index{% endblock %}
+
+{% block body %}
+{#<!-- ======= Breadcrumbs ======= -->
+    <div class="breadcrumbs d-flex align-items-center" style="background-image: url('assets/img/contact-header.jpg');">
+      <div class="container position-relative d-flex flex-column align-items-center">
+
+        <h2>Contact</h2>
+        <ol>
+          <li><a href="index.html">Home</a></li>
+          <li>Contact</li>
+        </ol>
+
+      </div>
+    </div><!-- End Breadcrumbs -->#}
+    <h1>User index</h1>
+
+
+				<div class="container-fluid p-0">
+
+					<h1 class="h3 mb-3">Blank Page</h1>
+
+					<div class="row">
+						<div class="col-12" style="overflow-x: scroll">
+							<div class="card" style="width: 4300px;">
+								<div class="card-header">
+									<h5 class="card-title mb-0">Empty card</h5>
+								</div>
+								<div class="card-body">
+                                
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Prenom</th>
+                <th>Adress</th>
+                <th>Cin</th>
+                <th>Datenaissance</th>
+                <th>Datecreationc</th>
+                <th>Status</th>
+                <th>Role</th>
+                <th>Motpass</th>
+                <th>Email</th>
+                <th>Token</th>
+                <th>Score</th>
+                <th>Numtel</th>
+                <th>Image</th>
+                <th>CompteEx</th>
+                <th>TokenEx</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.nom }}</td>
+                <td>{{ user.prenom }}</td>
+                <td>{{ user.adress }}</td>
+                <td>{{ user.cin }}</td>
+                <td>{{ user.datenaissance ? user.datenaissance|date('Y-m-d') : '' }}</td>
+                <td>{{ user.datecreationc ? user.datecreationc|date('Y-m-d') : '' }}</td>
+                <td>{{ user.status ? 'Yes' : 'No' }}</td>
+                <td>{{ user.role }}</td>
+                <td>{{ user.motpass }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.token }}</td>
+                <td>{{ user.score }}</td>
+                <td>{{ user.numtel }}</td>
+                <td><img style="width:100px;height:100px" src="{{ user.image }}"> </td>
+                <td>{{ user.compteEx ? user.compteEx|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ user.tokenEx ? user.tokenEx|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_user_show', {'id': user.id}) }}">show</a>
+                    <a href="{{ path('app_user_edit', {'id': user.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="18">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_user_new') }}">Create news</a>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+{% endblock %}

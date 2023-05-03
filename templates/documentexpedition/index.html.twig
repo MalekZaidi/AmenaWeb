@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Documentexpedition index{% endblock %}
+
+{% block body %}
+    <h1>Documentexpedition index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Datesignature</th>
+                <th>Statut</th>
+                <th>Description</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for documentexpedition in documentexpeditions %}
+            <tr>
+                <td>{{ documentexpedition.id }}</td>
+                <td>{{ documentexpedition.datesignature ? documentexpedition.datesignature|date('Y-m-d') : '' }}</td>
+                <td>{{ documentexpedition.statut }}</td>
+                <td>{{ documentexpedition.description }}</td>
+
+                <td>
+                    <a class="btn btn-primary btn-sm" href="{{ path('app_documentexpedition_show', {'id': documentexpedition.id}) }}">show</a>
+                    <a class="btn btn-primary btn-sm" href="{{ path('app_documentexpedition_edit', {'id': documentexpedition.id}) }}">edit</a>
+                    <a class="btn btn-primary btn-sm" href="{{ path('app_documentexpedition_print', {'id': documentexpedition.id}) }}">imprimer</a>                
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">Aucun element</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_documentexpedition_new') }}">Ajouter un document d'expedition</a>
+
+{% block calendar %}
+<div id='calendar'></div>
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css' />
+
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.5/index.global.min.js'></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        headerToolbar: {
+        left: "prev,next today",
+        center: "title",
+        right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth"
+    },
+        
+      initialView: 'dayGridMonth',
+      events: {{ events|raw }},
+      eventClick: function(info) {
+        // get the ID of the clicked shipment
+        var shipmentId = info.event.title.match(/\d+/)[0];
+        
+        // get the details of the shipment using an AJAX request
+        $.get("/colis/" + shipmentId, function(data) {
+          // display the details in an alert
+          var shipment = JSON.parse(data);
+          alert("Nom expéditeur: " + shipment.nomExpediteur + "\n" +
+                "Adresse expéditeur: " + shipment.adresseExpediteur + "\n" +
+                "Nom destinataire: " + shipment.nomDestinataire + "\n" +
+                "Adresse destinataire: " + shipment.adresseDestinataire + "\n" +
+                "Poids: " + shipment.poids + " kg");
+        });
+      }
+    });
+    calendar.render();
+  });
+</script>
+{% endblock %}
+{% endblock %}

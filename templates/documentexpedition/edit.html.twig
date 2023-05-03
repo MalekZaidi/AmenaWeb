@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Documentexpedition{% endblock %}
+
+{% block body %}
+    <h1>Modifier Documentexpedition</h1>
+
+    {{ include('documentexpedition/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_documentexpedition_index') }}">back to list</a>
+
+    {{ include('documentexpedition/_delete_form.html.twig') }}
+{% endblock %}

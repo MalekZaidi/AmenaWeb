@@ -1,0 +1,141 @@
+{% extends 'baseadmin.html.twig' %}
+
+{% block title %}Colis index{% endblock %}
+
+{% block body %}
+
+    <h1>Colis index</h1>
+
+				<div class="container-fluid p-0">
+
+					<h1 class="h3 mb-3">Blank Page</h1>
+                            <form id="search-form">
+            <div class="form-group">
+                <label for="nomExpediteur">Nom expediteur</label>
+                <input type="text" class="form-control" id="nomExpediteur" name="nomExpediteur">
+            </div>
+            <div class="form-group">
+                <label for="nomDestinataire">Nom destinataire</label>
+                <input type="text" class="form-control" id="nomDestinataire" name="nomDestinataire">
+            </div>
+            <div class="form-group">
+                <label for="poids">Poids</label>
+                <input type="text" class="form-control" id="poids" name="poids">
+            </div>
+            <button type="submit" class="btn btn-primary">Rechercher</button>
+        </form>
+
+					<div class="row">
+						<div class="col-12" style="overflow-x: scroll">
+							<div class="card" style="width: 4300px;">
+								<div class="card-header">
+									<h5 class="card-title mb-0">Empty card</h5>
+								</div>
+								<div class="card-body">
+    <table class="table">
+        <thead>
+            <tr>
+                 <th><a href="{{ path('app_admin_colis_index', { 'sort': 'id', 'direction': (app.request.get('sort') == 'id' and app.request.get('direction') == 'asc') ? 'desc' : 'asc' }) }}">Id</a></th>
+                                    <th><a href="{{ path('app_admin_colis_index', { 'sort': 'nomExpediteur', 'direction': (app.request.get('sort') == 'nomExpediteur' and app.request.get('direction') == 'asc') ? 'desc' : 'asc' }) }}">NomExpediteur</a></th>
+                                    <th><a href="{{ path('app_admin_colis_index', { 'sort': 'adresseExpediteur', 'direction': (app.request.get('sort') == 'adresseExpediteur' and app.request.get('direction') == 'asc') ? 'desc' : 'asc' }) }}">AdresseExpediteur</a></th>
+                                    <th><a href="{{ path('app_admin_colis_index', { 'sort': 'nomDestinataire', 'direction': (app.request.get('sort') == 'nomDestinataire' and app.request.get('direction') == 'asc') ? 'desc' : 'asc' }) }}">NomDestinataire</a></th>
+                                    <th><a href="{{ path('app_admin_colis_index', { 'sort': 'adresseDestinataire', 'direction': (app.request.get('sort') == 'adresseDestinataire' and app.request.get('direction') == 'asc') ? 'desc' : 'asc' }) }}">AdresseDestinataire</a></th>
+                                    <th><a href="{{ path('app_admin_colis_index', { 'sort': 'poids', 'direction': (app.request.get('sort') == 'poids' and app.request.get('direction') == 'asc') ? 'desc' : 'asc' }) }}">Poids</a></th>
+                                    <th><a href="{{ path('app_admin_colis_index', { 'sort': 'statut', 'direction': (app.request.get('sort') == 'statut' and app.request.get('direction') == 'asc') ? 'desc' : 'asc' }) }}">Statut</a></th>
+                                    <th><a href="{{ path('app_admin_colis_index', { 'sort': 'dateExpedition', 'direction': (app.request.get('sort') == 'dateExpedition' and app.request.get('direction') == 'asc') ? 'desc' : 'asc' }) }}">DateExpedition</a></th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+       {% for coli in colis %}
+    <tr>
+        <td>{{ coli.id }}</td>
+        <td>{{ coli.nomExpediteur }}</td>
+        <td>{{ coli.adresseExpediteur }}</td>
+        <td>{{ coli.nomDestinataire }}</td>
+        <td>{{ coli.adresseDestinataire }}</td>
+        <td>{{ coli.poids }}</td>
+        <td>{{ coli.statut }}</td>
+        <td>{{ coli.dateExpedition ? coli.dateExpedition|date('Y-m-d') : '' }}</td>
+        <td>
+            <a href="{{ path('app_admin_colis_show', {'id': coli.id}) }}">Afficher</a>
+            <a href="{{ path('app_admin_colis_edit', {'id': coli.id}) }}">Modifier</a>
+        </td>
+    </tr>
+{% else %}
+    <tr>
+        <td colspan="9">Aucun colis trouvé</td>
+    </tr>
+{% endfor %}
+        </tbody>
+    </table>
+
+
+
+
+<!-- <script>
+const searchForm = document.querySelector('#search-form');
+const tableBody = document.querySelector('#table-body');
+
+// Ajouter un écouteur d'événement pour le formulaire
+searchForm.addEventListener('submit', function(event) {
+  // Empêcher la soumission du formulaire
+  event.preventDefault();
+
+  // Récupérer les valeurs des champs de formulaire
+  const nomExpediteur = document.querySelector('#nomExpediteur').value;
+  const nomDestinataire = document.querySelector('#nomDestinataire').value;
+  const poids = document.querySelector('#poids').value;
+
+  // Envoyer une requête AJAX avec les paramètres de recherche
+  const xhr = new XMLHttpRequest();
+xhr.open('GET', `http://localhost:8000/admin/colis/?nomExpediteur=${nomExpediteur}&nomDestinataire=${nomDestinataire}&poids=${poids}`);
+xhr.onload = function() {
+  if (xhr.status === 200) {
+    // Effacer le contenu précédent du tableau
+    tableBody.innerHTML = '';
+
+    // Vérifier que la réponse est bien du JSON
+    let colis;
+    try {
+      colis = JSON.parse(xhr.responseText);
+    } catch (e) {
+      console.error("La réponse n'est pas du JSON:", xhr.responseText);
+      return;
+    }
+
+    // Ajouter les nouvelles données dans le tableau
+    for (const coli of colis) {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${coli.id}</td>
+        <td>${coli.nomExpediteur}</td>
+        <td>${coli.adresseExpediteur}</td>
+        <td>${coli.nomDestinataire}</td>
+        <td>${coli.adresseDestinataire}</td>
+        <td>${coli.poids}</td>
+        <td>${coli.statut}</td>
+        <td>${coli.dateExpedition ? new Date(coli.dateExpedition).toLocaleDateString() : ''}</td>
+        <td>
+          <a href="${coli.path_show}">Afficher</a>
+          <a href="${coli.path_edit}">Modifier</a>
+        </td>
+      `;
+      tableBody.appendChild(row);
+    }
+  } else {
+    console.error(xhr.statusText);
+  }
+};
+xhr.onerror = function() {
+  console.error(xhr.statusText);
+};
+xhr.send();
+});
+</script> -->
+
+
+
+<a href="{{ path('app_admin_colis_new') }}">Ajouter un nouveau colis</a>
+
+{% endblock %}

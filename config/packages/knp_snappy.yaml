@@ -1,0 +1,13 @@
+knp_snappy:
+    pdf:
+        enabled: true
+        binary: '%kernel.project_dir%/vendor/wemersonjanuario/wkhtmltopdf-windows/bin/64bit/wkhtmltopdf'
+        options: []
+        env: []
+    image:
+        enabled: true
+        binary: '%kernel.project_dir%/vendor/wemersonjanuario/wkhtmltoimage-windows/bin/64bit/wkhtmltoimage'
+        options:
+            enable-local-file-access: true
+            keep-relative-links: true
+        env: []

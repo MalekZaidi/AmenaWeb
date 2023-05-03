@@ -1,0 +1,71 @@
+{% extends 'baseadmin.html.twig' %}
+
+{% block title %}Colis{% endblock %}
+
+{% block body %}
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Colis</h4>
+                    </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <th>Id</th>
+                                    <td>{{ coli.id }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Nom de l'expéditeur</th>
+                                    <td>{{ coli.nomExpediteur }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Adresse de l'expéditeur</th>
+                                    <td>{{ coli.adresseExpediteur }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Nom du destinataire</th>
+                                    <td>{{ coli.nomDestinataire }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Adresse du destinataire</th>
+                                    <td>{{ coli.adresseDestinataire }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Poids</th>
+                                    <td>{{ coli.poids }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Statut</th>
+                                    <td>{{ coli.statut }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Date d'expédition</th>
+                                    <td>{{ coli.dateExpedition ? coli.dateExpedition|date('d/m/Y') : '' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{{ path('app_admin_colis_index') }}" class="btn btn-secondary">Retour à la liste</a>
+                        <a href="{{ path('app_admin_colis_edit', {'id': coli.id}) }}" class="btn btn-primary">Modifier</a>
+                        {{ include('admin_colis/_delete_form.html.twig') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{asset('front/assets/vendor/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{asset('front/assets/vendor/bootstrap-icons/bootstrap-icons.css')}}" rel="stylesheet">
+    <link href="{{asset('front/assets/vendor/aos/aos.css')}}" rel="stylesheet">
+    <link href="{{asset('front/assets/vendor/glightbox/css/glightbox.min.css')}}" rel="stylesheet">
+    <link href="{{asset('front/assets/vendor/swiper/swiper-bundle.min.css')}}" rel="stylesheet">
+    <link href="{{asset('front/assets/vendor/remixicon/remixicon.css')}}" rel="stylesheet">
+    <link href="{{asset('front/assets/css/main.css')}}" rel="stylesheet">
+{% endblock %}

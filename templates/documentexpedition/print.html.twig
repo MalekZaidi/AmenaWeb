@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Document d'expédition</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 25px;
+        }
+        #header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        #logo {
+            width: 200px;
+        }
+        #title {
+            text-align: center;
+            margin: 0;
+        }
+        table {
+            border-collapse: collapse;
+            margin: 0 auto 22px;
+        }
+        th, td {
+            padding: 5px;
+            border: 1px solid #ccc;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <img id="logo" src="C:\xampp\htdocs\img\amena-logo.png" alt="Logo">
+        <h1 id="title">Document d'expédition</h1>
+    </div>
+    <table>
+        <tr>
+            <th>Expéditeur</th>
+            <th>Destinataire</th>
+        </tr>
+        <tr>
+            <td>
+                <p><strong>Nom :</strong> {{ nomExpediteur }}</p>
+                <p><strong>Adresse :</strong> {{ adresseExpediteur }}</p>
+                <p><strong>Date d'expédition :</strong> {{ dateexpedition|date('Y-m-d') }}</p>
+            </td>
+            <td>
+                <p><strong>Nom :</strong> {{ nomDestinataire }}</p>
+                <p><strong>Adresse :</strong> {{ adresseDestinataire }}</p>
+                <p><strong>Date de signature :</strong> {{ dateSignature|date('Y-m-d') }}</p>
+                <p><strong>Poids :</strong> {{ poids }} kg</p>
+            </td>
+        </tr>
+    </table>
+    <p><strong>Description :</strong> {{ description }}</p>
+</body>
+</html>

@@ -1,0 +1,4 @@
+<form method="post" action="{{ path('app_admin_colis_delete', {'id': coli.id}) }}" onsubmit="return confirm('Vous etes sure de supprimer ce colis ?');">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ coli.id) }}">
+    <button class="btn">Supprimer</button>
+</form>

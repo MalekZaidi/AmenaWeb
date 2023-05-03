@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User{% endblock %}
+
+{% block body %}
+    <h1>User</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ user.id }}</td>
+            </tr>
+            <tr>
+                <th>Nom</th>
+                <td>{{ user.nom }}</td>
+            </tr>
+            <tr>
+                <th>Prenom</th>
+                <td>{{ user.prenom }}</td>
+            </tr>
+            <tr>
+                <th>Adress</th>
+                <td>{{ user.adress }}</td>
+            </tr>
+            <tr>
+                <th>Cin</th>
+                <td>{{ user.cin }}</td>
+            </tr>
+            <tr>
+                <th>Datenaissance</th>
+                <td>{{ user.datenaissance ? user.datenaissance|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Datecreationc</th>
+                <td>{{ user.datecreationc ? user.datecreationc|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td>{{ user.status ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Role</th>
+                <td>{{ user.role }}</td>
+            </tr>
+            <tr>
+                <th>Motpass</th>
+                <td>{{ user.motpass }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ user.email }}</td>
+            </tr>
+            <tr>
+                <th>Token</th>
+                <td>{{ user.token }}</td>
+            </tr>
+            <tr>
+                <th>Score</th>
+                <td>{{ user.score }}</td>
+            </tr>
+            <tr>
+                <th>Numtel</th>
+                <td>{{ user.numtel }}</td>
+            </tr>
+            <tr>
+                <th>Image</th>
+                <td>{{ user.image }}</td>
+            </tr>
+            <tr>
+                <th>CompteEx</th>
+                <td>{{ user.compteEx ? user.compteEx|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>TokenEx</th>
+                <td>{{ user.tokenEx ? user.tokenEx|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_user_index') }}">back to list</a>
+
+    <a href="{{ path('app_user_edit', {'id': user.id}) }}">edit</a>
+
+    {{ include('user/_delete_form.html.twig') }}
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+  <h1>Liste des colis:</h1>
+  <ul>
+    {% for coli in colis %}
+      <li>
+        {{ coli.adresseDestinataire }}
+        {% set adresse = coli.adresseDestinataire %}
+        {% set adresse = adresse ~ '+Tunisia' %}
+        <a href="{{ path('app_map', {'adresse': adresse}) }}">Afficher sur la carte</a>
+        <div id="map-{{ loop.index }}" style="height: 600px;"></div>
+      </li>
+      <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
+      <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+      <script>
+        // Récupération de la géolocalisation
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const latitude = position.coords.latitude;
+              const longitude = position.coords.longitude;
+          // Initialisation de la carte Mapbox
+          mapboxgl.accessToken = 'pk.eyJ1IjoibWFsZWt6YWlkaSIsImEiOiJjbGVsZXdwdWIwdXM2M3luNGNqZXJybGJwIn0.pT6KgpnGNkMUdaZ-8vq08w';
+          const map = new mapboxgl.Map({
+            container: 'map-{{ loop.index }}',
+            style: 'mapbox://styles/mapbox/satellite-streets-v12',
+            center: [longitude, latitude],
+            zoom: 14,
+          });
+
+      // Ajout d'un marqueur pour la position de l'utilisateur
+      const marker = new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(map);
+
+// Récupération de l'adresse de destination depuis la variable Twig
+const adresse = '{{ coli.adresseDestinataire|replace({' ': '+'}) }}' + '+Tunisia';
+
+
+// Récupération des coordonnées de l'adresse de destination en utilisant l'API Geocoding de Mapbox
+const url = 'https://api.mapbox.com/geocoding/v5/mapbox.places/' + adresse + '.json?access_token=' + mapboxgl.accessToken;
+fetch(url)
+  .then(response => response.json())
+  .then(data => {
+    const destination = data.features[0].geometry.coordinates;
+
+    // Calcul du trajet le plus court en utilisant l'API Directions de Mapbox
+    const url = 'https://api.mapbox.com/directions/v5/mapbox/driving/' + longitude + ',' + latitude + ';' + destination[0] + ',' + destination[1] + '?geometries=geojson&access_token=' + mapboxgl.accessToken;
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        const route = data.routes[0].geometry;
+        
+        // Création de la source de données pour le trajet
+        map.addSource('route-{{ loop.index }}', {
+          type: 'geojson',
+          data: {
+            type: 'Feature',
+            properties: {},
+            geometry: route
+          }
+        });
+
+        // Ajout de la couche de ligne pour représenter le trajet
+        map.addLayer({
+          id: 'route-{{ loop.index }}',
+          type: 'line',
+          source: 'route-{{ loop.index }}',
+          layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+          },
+          paint: {
+            'line-color': '#096a09',
+            'line-width': 8
+          }
+        });
+      });
+  });
+    });
+}
+  </script>
+{% endfor %}
+{% endblock %}

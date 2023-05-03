@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Competition index{% endblock %}
+
+{% block body %}
+    <h1>Competition index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>DateDeb</th>
+                <th>DateFin</th>
+                <th>Type</th>
+                <th>Nbp</th>
+                <th>Id_uc</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for competition in competitions %}
+            <tr>
+                <td>{{ competition.id }}</td>
+                <td>{{ competition.title }}</td>
+                <td>{{ competition.dateDeb ? competition.dateDeb|date('Y-m-d') : '' }}</td>
+                <td>{{ competition.dateFin ? competition.dateFin|date('Y-m-d') : '' }}</td>
+                <td>{{ competition.type }}</td>
+                <td>{{ competition.nbp }}</td>
+                <td>{{ competition.idUc }}</td>
+                <td>
+                    <a href="{{ path('app_competition_show', {'id': competition.id}) }}">show</a>
+                    <a href="{{ path('app_competition_edit', {'id': competition.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_competition_new') }}">Create new</a>
+{% endblock %}
