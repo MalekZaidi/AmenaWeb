@@ -55,7 +55,13 @@ class ColisRepository extends ServiceEntityRepository
         FROM App\Entity\Colis c'
     );
     return $query->getResult();
-}
+}public function findBySearchQuerya($nsc){
+    return $this->createQueryBuilder('colis')
+    ->where('colis.nomExpediteur LIKE :email')
+    ->setParameter('email', '%'.$nsc.'%')
+    ->getQuery()
+    ->getResult();
+    }
 }
 
 //    /**

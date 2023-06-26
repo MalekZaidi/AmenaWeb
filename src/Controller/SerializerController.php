@@ -35,23 +35,26 @@ class SerializerController extends AbstractController
         return new JsonResponse($jsonContent);
     }
     #[Route('/new', name: 'app_json_new')]
-    public function Add (Request $request, EntityManagerInterface $entityManager, NormalizerInterface $normalizer): Response
-    {    
-    $coli = new Colis();
-    $user = $entityManager->getRepository(User::class)->find(161);
-    $coli->setIdu($user);
-    $coli->setNomExpediteur($request->get("NomExpediteur"));
-    $coli->setNomExpediteur($request->get("AdressseExpediteur"));
-    $coli->setNomExpediteur($request->get("NomDestinataire"));
-    $coli->setNomExpediteur($request->get("AdresseDestinataire"));
-    $coli->setNomExpediteur($request->get("poids"));
-    $entityManager->persist($coli);
-    $entityManager->flush();
-    $jsonContent = $normalizer->normalize($coli, 'json', ['groups' => 'colis']);
-        return new Response(json_encode($jsonContent));
+    public function add(Request $request, EntityManagerInterface $entityManager, NormalizerInterface $normalizer): Response
+    {
+        $coli = new Colis();
+        $user = $entityManager->getRepository(User::class)->find(161);
+        $coli->setIdu($user);
+        $coli->setNomExpediteur($request->get("NomExpediteur"));
+        $coli->setAdresseExpediteur($request->get("AdresseExpediteur"));
+        $coli->setNomDestinataire($request->get("NomDestinataire"));
+        $coli->setAdresseDestinataire($request->get("AdresseDestinataire"));
+        $coli->setPoids($request->get("poids"));
+        $coli->setStatut("en attente");
+        $today = new \DateTime();
+        $coli->setDateExpedition($today);
+        $entityManager->persist($coli);
+        $entityManager->flush();
     
+        $jsonContent = $normalizer->normalize($coli, null, ['groups' => 'colis']);
+        return new Response(json_encode($jsonContent));
+    }
 
-}
 #[Route('/{id}/edit', name:'app_json_edit')]
 public function updateJson(Request $req,$id,NormalizerInterface $Normalizer)
 {   
@@ -60,10 +63,13 @@ public function updateJson(Request $req,$id,NormalizerInterface $Normalizer)
     $user = $entityManager->getRepository(User::class)->find(161);
     $coli->setIdu($user);
     $coli->setNomExpediteur($req->get("NomExpediteur"));
-    $coli->setNomExpediteur($req->get("AdressseExpediteur"));
-    $coli->setNomExpediteur($req->get("NomDestinataire"));
-    $coli->setNomExpediteur($req->get("AdresseDestinataire"));
-    $coli->setNomExpediteur($req->get("poids"));
+    $coli->setAdresseExpediteur($req->get("AdresseExpediteur"));
+    $coli->setNomDestinataire($req->get("NomDestinataire"));
+    $coli->setAdresseDestinataire($req->get("AdresseDestinataire"));
+    $coli->setPoids($req->get("poids"));
+    $coli->setStatut("en attente");
+    $today = new \DateTime();
+    $coli->setDateExpedition($today);
     $entityManager->persist($coli);
     $entityManager->flush();
     $jsonContent = $Normalizer->normalize($coli, 'json', ['groups' => 'colis']);

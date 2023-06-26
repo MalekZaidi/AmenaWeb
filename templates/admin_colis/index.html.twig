@@ -8,21 +8,8 @@
 
 				<div class="container-fluid p-0">
 
-					<h1 class="h3 mb-3">Blank Page</h1>
-                            <form id="search-form">
-            <div class="form-group">
-                <label for="nomExpediteur">Nom expediteur</label>
-                <input type="text" class="form-control" id="nomExpediteur" name="nomExpediteur">
-            </div>
-            <div class="form-group">
-                <label for="nomDestinataire">Nom destinataire</label>
-                <input type="text" class="form-control" id="nomDestinataire" name="nomDestinataire">
-            </div>
-            <div class="form-group">
-                <label for="poids">Poids</label>
-                <input type="text" class="form-control" id="poids" name="poids">
-            </div>
-            <button type="submit" class="btn btn-primary">Rechercher</button>
+					<div class="card-body">
+						<input type="text" id="search" class="form-control" placeholder="Search"><br>
         </form>
 
 					<div class="row">
@@ -32,7 +19,7 @@
 									<h5 class="card-title mb-0">Empty card</h5>
 								</div>
 								<div class="card-body">
-    <table class="table">
+    <table border="1" id="t" class="table">
         <thead>
             <tr>
                  <th><a href="{{ path('app_admin_colis_index', { 'sort': 'id', 'direction': (app.request.get('sort') == 'id' and app.request.get('direction') == 'asc') ? 'desc' : 'asc' }) }}">Id</a></th>
@@ -46,7 +33,7 @@
                 <th>actions</th>
             </tr>
         </thead>
-        <tbody id="table-body">
+        <tbody id="all">
        {% for coli in colis %}
     <tr>
         <td>{{ coli.id }}</td>
@@ -61,14 +48,14 @@
             <a href="{{ path('app_admin_colis_show', {'id': coli.id}) }}">Afficher</a>
             <a href="{{ path('app_admin_colis_edit', {'id': coli.id}) }}">Modifier</a>
         </td>
-    </tr>
-{% else %}
-    <tr>
-        <td colspan="9">Aucun colis trouvé</td>
-    </tr>
-{% endfor %}
-        </tbody>
-    </table>
+    </tr>{% else %}
+									<tr>
+										 <td colspan="9">Aucun colis trouvé</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+							<tbody id="searchtab"></tbody>
+						</table>
 
 
 
@@ -139,3 +126,68 @@ xhr.send();
 <a href="{{ path('app_admin_colis_new') }}">Ajouter un nouveau colis</a>
 
 {% endblock %}
+{% block javascripts %}
+						{{ parent() }}
+
+
+						<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+						<script>
+							$(document).ready(function () {
+$("#search").keyup(function () {
+var value = $(this).val();
+console.log("value : ")
+$.ajax({
+url: "{{ path('app_adminC_search') }}",
+type: 'GET',
+data: {
+'searchValue': value
+},
+success: function (retour) {
+if (retour) {
+$('#t tbody#searchtab').empty();
+$.each(JSON.parse(retour), function (i, obj) {
+$('#t tbody#all').hide();
+$('#t tbody#searchtab').append('<tr><td> '+obj.id+' </td><td> '+obj.nomExpediteur+' </td><td> '+obj.adresseExpediteur +' </td><td> '+obj.nomDestinataire +' </td><td> '+obj.adresseDestinataire+' </td><td> '+obj.poids+' </td><td> '+obj.statut+' </td><td> '+obj.dateExpedition+' </td></tr>');
+});
+} else {
+$('#t tbody#all').show();
+$('#t tbody#searchtab').empty();
+$('#t tbody#searchtab').fadeIn('fast');
+}
+}
+});
+return false;
+});
+});
+$(document).ready(function () {
+$("body").on("click", "#btn-block", function () {
+var userId = $(this).data("id");
+var status = $(this).text().trim();
+$.ajax({
+url: "/user/block/" + userId,
+type: "GET",
+data: {
+status: status
+},
+success: function (response) {
+if (response.success) { // Mise à jour de l'état du bouton
+var button = $("#btn-block[data-id='" + userId + "']");
+if (status === "Bloquer") {
+button.text("Débloquer");
+} else {
+button.text("Bloquer");
+}
+} else {
+alert("Erreur : " + response.message);
+}
+},
+error: function () {
+alert("Une erreur est survenue lors de la requête AJAX.");
+}
+});
+});
+});
+						</script>
+
+
+					{% endblock %}

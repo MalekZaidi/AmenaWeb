@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class ChatGptController extends AbstractController
 {
     private const API_URL = 'https://api.openai.com/v1/engines/text-davinci-003/completions';
-    private const API_KEY = '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';
+    private const API_KEY = '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';
     
     #[Route('/chat', name: 'app_chat_index')]
     public function index(Request $request): Response

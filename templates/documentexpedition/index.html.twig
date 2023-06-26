@@ -37,10 +37,12 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_documentexpedition_new') }}">Ajouter un document d'expedition</a>
+    <a class="btn btn-primary btn-sm" href="{{ path('app_documentexpedition_new') }}">Ajouter un document d'expedition</a>
 
 {% block calendar %}
-<div id='calendar'></div>
+<div style='display: flex; justify-content: center;'>
+  <div id='calendar' style='max-width: 1000px'></div>
+</div>
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css' />
 
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.5/index.global.min.js'></script>
@@ -55,6 +57,8 @@
     },
         
       initialView: 'dayGridMonth',
+      aspectRatio: 1.5,
+      contentHeight: 500,
       events: {{ events|raw }},
       eventClick: function(info) {
         // get the ID of the clicked shipment

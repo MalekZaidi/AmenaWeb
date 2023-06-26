@@ -50,7 +50,7 @@
                     </div>
                     <div class="card-footer">
                         {% if coli.statut != 'livré' %}
-                            <form action="{{ path('livraison_confirm', {'id': coli.id}) }}" method="post">
+                            <form action="{{ path('livraison_confirm', {'id': coli.id}) }}" method="post" onsubmit="return confirm('Vous etes sure de confirmer la livraison de ce colis ?');">
                                 <button type="submit" class="btn btn-primary">Confirmer la livraison</button>
                             </form>
                         {% endif %}

@@ -12,10 +12,22 @@ use App\Entity\User;
 use App\Form\ColisType;
 use App\Repository\ColisRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 #[Route('/admin/colis')]
 class AdminColisController extends AbstractController
 {
+    #[Route('/search', name: 'app_adminC_search', methods: ['GET'])]
+    public function searchStudentx(Request $request, NormalizerInterface $Normalizer)
+    {
+        //die("test");
+        $repository = $this->getDoctrine()->getRepository(Colis::class);
+        $requestString = $request->get('searchValue');
+        $colis = $repository->findBySearchQuerya($requestString);
+        $jsonContent = $Normalizer->normalize($colis, 'json', ['groups' => 'colis']);
+        $retour = json_encode($jsonContent);
+        return new Response($retour);
+    }
     #[Route('/', name: 'app_admin_colis_index', methods: ['GET'])]
     public function index(ColisRepository $colisRepository, Request $request): Response
     {
