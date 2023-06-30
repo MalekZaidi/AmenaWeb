@@ -3,6 +3,18 @@
 {% block title %}Colis{% endblock %}
 
 {% block body %}
+<!-- ======= Breadcrumbs ======= -->
+    <div class="breadcrumbs d-flex align-items-center" style="background-image: url('assets/img/contact-header.jpg');">
+      <div class="container position-relative d-flex flex-column align-items-center">
+
+        <h2>Colis</h2>
+        <ol>
+          <li><a href="index.html">Accueil</a></li>
+          <li>Colis</li>
+        </ol>
+
+      </div>
+    </div><!-- End Breadcrumbs -->
     <div class="container my-5">
         <div class="row justify-content-center">
             <div class="col-lg-8">
@@ -50,16 +62,96 @@
                     </div>
                     <div class="card-footer">
                         {% if coli.statut != 'livré' %}
-                            <form action="{{ path('livraison_confirm', {'id': coli.id}) }}" method="post" onsubmit="return confirm('Vous etes sure de confirmer la livraison de ce colis ?');">
-                                <button type="submit" class="btn btn-primary">Confirmer la livraison</button>
+                            <form action="{{ path('livraison_confirm', {'id': coli.id}) }}" method="post">
+                                <button type="submit" class="btn btn-primary" onsubmit="return confirm('Vous etes sure de confirmer la livraison ? La livraison se fait qu'une seule fois');">Confirmer la livraison</button>
                             </form>
                         {% endif %}
-                        <a href="{{ path('app_documentexpedition_index') }}" class="btn btn-secondary">Retour à la liste</a>
+                        <a href="{{ path('app_documentexpedition_index') }}" class="btn btn-secondary"  onsubmit="return confirm('Vous etes sure de confirmer la livraison ? La livraison se fait qu'une seule fois');">Retour à la liste</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <h1>Liste des colis:</h1>
+  <ul>
+    {% for colis in coli %}
+            <li>
+                {{ colis.adresseDestinataire }}
+                {% set adresse = colis.adresseDestinataire %}
+                {% set adresse = adresse ~ '+Tunisia' %}
+                <a href="#" class="show-on-map" data-adresse="{{ adresse }}">Afficher sur la carte</a>
+            </li>
+        <div id="map-{{ loop.index }}" style="height: 600px;"></div>
+      </li>
+      <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
+      <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+      <script>
+        // Récupération de la géolocalisation
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const latitude = position.coords.latitude;
+              const longitude = position.coords.longitude;
+          // Initialisation de la carte Mapbox
+          mapboxgl.accessToken = 'pk.eyJ1IjoibWFsZWt6YWlkaSIsImEiOiJjbGVsZXdwdWIwdXM2M3luNGNqZXJybGJwIn0.pT6KgpnGNkMUdaZ-8vq08w';
+          const map = new mapboxgl.Map({
+            container: 'map-{{ loop.index }}',
+            style: 'mapbox://styles/mapbox/satellite-streets-v12',
+            center: [longitude, latitude],
+            zoom: 14,
+          });
+
+      // Ajout d'un marqueur pour la position de l'utilisateur
+      const marker = new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(map);
+
+// Récupération de l'adresse de destination depuis la variable Twig
+const adresse = '{{ colis.adresseDestinataire|replace({' ': '+'}) }}' + '+Tunisia';
+
+
+// Récupération des coordonnées de l'adresse de destination en utilisant l'API Geocoding de Mapbox
+const url = 'https://api.mapbox.com/geocoding/v5/mapbox.places/' + adresse + '.json?access_token=' + mapboxgl.accessToken;
+fetch(url)
+  .then(response => response.json())
+  .then(data => {
+    const destination = data.features[0].geometry.coordinates;
+
+    // Calcul du trajet le plus court en utilisant l'API Directions de Mapbox
+    const url = 'https://api.mapbox.com/directions/v5/mapbox/driving/' + longitude + ',' + latitude + ';' + destination[0] + ',' + destination[1] + '?geometries=geojson&access_token=' + mapboxgl.accessToken;
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        const route = data.routes[0].geometry;
+        
+        // Création de la source de données pour le trajet
+        map.addSource('route-{{ loop.index }}', {
+          type: 'geojson',
+          data: {
+            type: 'Feature',
+            properties: {},
+            geometry: route
+          }
+        });
+
+        // Ajout de la couche de ligne pour représenter le trajet
+        map.addLayer({
+          id: 'route-{{ loop.index }}',
+          type: 'line',
+          source: 'route-{{ loop.index }}',
+          layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+          },
+          paint: {
+            'line-color': '#096a09',
+            'line-width': 8
+          }
+        });
+      });
+  });
+    });
+}
+  </script>
+{% endfor %}
 {% endblock %}
 
 {% block stylesheets %}

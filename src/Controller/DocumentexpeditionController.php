@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\ColisRecRepository;
 use App\Repository\UserRepository;
 use Knp\Snappy\Pdf;
 use App\Entity\Colis;
@@ -29,34 +30,22 @@ class DocumentexpeditionController extends AbstractController
     }
 
     #[Route('/', name: 'app_documentexpedition_index', methods: ['GET'])]
-public function index(DocumentexpeditionRepository $documentexpeditionRepository, ColisRepository $colisRepository): Response
+public function index(DocumentexpeditionRepository $documentexpeditionRepository, ColisRecRepository $colisRecRepository): Response
 {
-    // Creation de la requête pour récupérer les colis avec le statut 'en attente' et 'livré'
-    $enAttenteShipments = $colisRepository->findBy(['statut' => 'en attente']); 
-    $livreShipments = $colisRepository->findBy(['statut' => 'livré']); 
+    $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+    $user = $this->getUser();
 
-    // On ajoute les colis en attente en rouge dans les événements
+    $colisRecs = $colisRecRepository->findBy(['id_u' => $user], ['id' => 'DESC']);
     $events = [];
-    foreach ($enAttenteShipments as $shipment) {
-        // Ajouter le lien vers la page de détails du colis dans la description de l'événement de livraison
-        $events[] = [
-            'title' => 'livraison numéro #' . $shipment->getId(),
-            'start' => $shipment->getDateExpedition()->format('Y-m-d'),
-            'color' => 'red',
-            // Route vers la page de détails du colis
-            'url' => $this->generateUrl('app_documentexpedition_colis_show', ['id' => $shipment->getId()]) 
-        ];
-    }
 
-    // On ajoute les colis livrés en vert dans les événements
-    foreach ($livreShipments as $shipment) {
-        // Ajouter le lien vers la page de détails du colis dans la description de l'événement de livraison
+    foreach ($colisRecs as $colisRec) {
+        $colis = $colisRec->getIdC();
+
         $events[] = [
-            'title' => 'livraison numéro #' . $shipment->getId(),
-            'start' => $shipment->getDateExpedition()->format('Y-m-d'),
-            'color' => 'green',
-            // Route vers la page de détails du colis
-            'url' => $this->generateUrl('app_documentexpedition_colis_show', ['id' => $shipment->getId()]) 
+            'title' => 'livraison numéro #' . $colis->getId(),
+            'start' => $colis->getDateExpedition()->format('Y-m-d'),
+            'color' => $colis->getStatut() == 'en attente' ? 'red' : 'green',
+            'url' => $this->generateUrl('app_documentexpedition_colis_show', ['id' => $colis->getId()]) 
         ];
     }
 
@@ -70,6 +59,8 @@ public function index(DocumentexpeditionRepository $documentexpeditionRepository
 public function new(Request $request, DocumentexpeditionRepository $colisRepository): Response
 {
 $documentexpedition = new Documentexpedition();
+
+
 $form = $this->createForm(DocumentexpeditionType::class, $documentexpedition);
 $form->handleRequest($request);
 
@@ -157,7 +148,7 @@ public function handleConfirmation(Colis $coli,UserRepository $userRepository): 
             $user->getNumtel(), // numéro de téléphone du destinataire
             [
                 'from' => '+12766630621', // numéro de téléphone Twilio
-                'body' => 'Bonjour, Votre colis est livré :) merci d\'avoir utiliser AMENA !',
+                'body' => 'Bonjour, Votre colis est livré 🙂 merci d\'avoir utiliser AMENA !',
             ]
         );
 
@@ -225,5 +216,3 @@ public function printAction(Request $request, $id)
 
 
 }
-
-
